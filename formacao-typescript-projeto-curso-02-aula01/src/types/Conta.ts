@@ -3,8 +3,8 @@ import { TipoTransacao } from "./TipoTransacao";
 import { Transacao } from "./Transacao";
 
 export class Conta {
-    nome: string;
-    saldo: number = JSON.parse(localStorage.getItem("saldo")) || 0;
+    protected nome: string;
+    protected saldo: number = JSON.parse(localStorage.getItem("saldo")) || 0;
     transacoes: Transacao[] = JSON.parse(localStorage.getItem("transacoes"), (key: string, value: any) => {
         if (key === "data") {
             return new Date(value);
@@ -15,6 +15,11 @@ export class Conta {
     constructor(nome: string) {
         this.nome = nome;
     }
+
+    getTitular () {
+        return this.nome;
+    }
+
     getGruposTransacoes(): GrupoTransacao[] {
         const gruposTransacoes: GrupoTransacao[] = [];
         const listaTransacoes: Transacao[] = structuredClone(this.transacoes);
@@ -82,5 +87,8 @@ export class Conta {
 }
 
 const conta = new Conta("Joana da Silva Olveira");
+console.log(conta.getTitular());
+
+// console.log(conta.nome);
 
 export default conta;
