@@ -89,7 +89,18 @@ export class Conta {
     }
 }
 
+export class ContaPremium extends Conta {
+    registrarTransacao(transacao: Transacao) {
+        if(transacao.tipoTransacao === TipoTransacao.DEPOSITO) {
+            console.log("ganhou um bonûs de 50 centavos");
+            transacao.valor += 0.50;
+        }
+        super.registrarTransacao(transacao);
+    }
+}
+
 const conta = new Conta("Joana da Silva Olveira");
+const contaPremium = new ContaPremium("Otavio Teste");
 console.log(conta.getTitular());
 
 // console.log(conta.nome);
