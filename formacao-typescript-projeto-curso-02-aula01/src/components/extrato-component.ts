@@ -1,14 +1,18 @@
-import { Conta } from "../../../src/types/Conta.js"
+import Conta from "../types/Conta.js";
 import { FormatoData } from "../types/FormatoData.js";
+import { GrupoTransacao } from "../types/GrupoTransacao.js";
 import { formatarMoeda, formatarData } from "../utils/formatters.js";
-const elementoRegistroTransacoesExtrato = document.querySelector(".extrato .registro-transacoes");
+
+const elementoRegistroTransacoesExtrato: HTMLElement = document.querySelector(".extrato .registro-transacoes");
+
 renderizarExtrato();
-function renderizarExtrato() {
-    const gruposTransacoes = Conta.getGruposTransacoes();
+function renderizarExtrato(): void {
+    const gruposTransacoes: GrupoTransacao[] = Conta.getGruposTransacoes();
     elementoRegistroTransacoesExtrato.innerHTML = "";
-    let htmlRegistroTransacoes = "";
+    let htmlRegistroTransacoes: string = "";
+
     for (let grupoTransacao of gruposTransacoes) {
-        let htmlTransacaoItem = "";
+        let htmlTransacaoItem: string = "";
         for (let transacao of grupoTransacao.transacoes) {
             htmlTransacaoItem += `
                 <div class="transacao-item">
@@ -20,6 +24,7 @@ function renderizarExtrato() {
                 </div>
             `;
         }
+
         htmlRegistroTransacoes += `
             <div class="transacoes-group">
                 <strong class="mes-group">${grupoTransacao.label}</strong>
@@ -27,14 +32,18 @@ function renderizarExtrato() {
             </div>
         `;
     }
+
     if (htmlRegistroTransacoes === "") {
         htmlRegistroTransacoes = "<div>Não há transações registradas.</div>";
     }
+
     elementoRegistroTransacoesExtrato.innerHTML = htmlRegistroTransacoes;
 }
+
 const ExtratoComponent = {
-    atualizar() {
+    atualizar(): void {
         renderizarExtrato();
     }
-};
+}
+
 export default ExtratoComponent;
