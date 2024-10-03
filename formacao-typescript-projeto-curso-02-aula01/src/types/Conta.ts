@@ -1,10 +1,11 @@
+import { Armazenador } from "./Armazenador";
 import { GrupoTransacao } from "./GrupoTransacao";
 import { TipoTransacao } from "./TipoTransacao";
 import { Transacao } from "./Transacao";
 
 export class Conta {
     protected nome: string;
-    protected saldo: number = JSON.parse(localStorage.getItem("saldo")) || 0;
+    protected saldo: number = Armazenador.obter("saldo") || 0;
     transacoes: Transacao[] = JSON.parse(localStorage.getItem("transacoes"), (key: string, value: any) => {
         if (key === "data") {
             return new Date(value);
