@@ -1,10 +1,12 @@
+import { Armazenador } from "./Armazenador";
+import { GrupoTransacao } from "./GrupoTransacao";
 import { TipoTransacao } from "./TipoTransacao";
 import { Transacao } from "./Transacao";
 
 export class Conta {
-    nome: string;
-    saldo: number = JSON.parse(localStorage.getItem("saldo")) || 0;
-    transacoes: Transacao[] = JSON.parse(localStorage.getItem("transacoes"), (key: string, value: any) => {
+    protected nome: string;
+    protected saldo: number = Armazenador.obter("saldo") || 0;
+    transacoes: Transacao[] = Armazenador.obter(("transacoes"), (key: string, value: any) => {
         if (key === "data") {
             return new Date(value);
         }
@@ -15,13 +17,18 @@ export class Conta {
         this.nome = nome;
     }
 
-    getGruposTransacoes() {
-        const gruposTransacoes = [];
-        const listaTransacoes = structuredClone(this.transacoes);
-        const transacoesOrdenadas = listaTransacoes.sort((t1, t2) => t2.data.getTime() - t1.data.getTime());
-        let labelAtualGrupoTransacao = "";
+    public getTitular () {
+        return this.nome;
+    }
+
+    public getGruposTransacoes(): GrupoTransacao[] {
+        const gruposTransacoes: GrupoTransacao[] = [];
+        const listaTransacoes: Transacao[] = structuredClone(this.transacoes);
+        const transacoesOrdenadas: Transacao[] = listaTransacoes.sort((t1, t2) => t2.data.getTime() - t1.data.getTime());
+        let labelAtualGrupoTransacao: string = "";
+
         for (let transacao of transacoesOrdenadas) {
-            let labelGrupoTransacao = transacao.data.toLocaleDateString("pt-br", { month: "long", year: "numeric" });
+            let labelGrupoTransacao: string = transacao.data.toLocaleDateString("pt-br", { month: "long", year: "numeric" });
             if (labelAtualGrupoTransacao !== labelGrupoTransacao) {
                 labelAtualGrupoTransacao = labelGrupoTransacao;
                 gruposTransacoes.push({
@@ -31,10 +38,19 @@ export class Conta {
             }
             gruposTransacoes.at(-1).transacoes.push(transacao);
         }
+
         return gruposTransacoes;
     }
 
-    registrarTransacao(novaTransacao) {
+    public getSaldo() {
+        return this.saldo;
+    }
+    
+    public getDataAcesso(): Date {
+        return new Date();
+    }
+
+    public registrarTransacao(novaTransacao: Transacao): void {
         if (novaTransacao.tipoTransacao == TipoTransacao.DEPOSITO) {
             this.depositar(novaTransacao.valor);
         }
@@ -45,35 +61,37 @@ export class Conta {
         else {
             throw new Error("Tipo de Transação é inválido!");
         }
+
         this.transacoes.push(novaTransacao);
         console.log(this.getGruposTransacoes());
-        localStorage.setItem("transacoes", JSON.stringify(this.transacoes));
+        Armazenador.salvar("transacoes", JSON.stringify(this.transacoes));
     }
 
-    debitar(valor) {
+    private debitar(valor: number): void {
         if (valor <= 0) {
             throw new Error("O valor a ser debitado deve ser maior que zero!");
         }
         if (valor > this.saldo) {
             throw new Error("Saldo insuficiente!");
         }
+
         this.saldo -= valor;
-        localStorage.setItem("saldo", this.saldo.toString());
+        Armazenador.salvar("saldo", this.saldo.toString());
     }
 
-    depositar(valor) {
+    private depositar(valor: number): void {
         if (valor <= 0) {
             throw new Error("O valor a ser depositado deve ser maior que zero!");
         }
+
         this.saldo += valor;
-        localStorage.setItem("saldo", this.saldo.toString());
-    }
-
-    getDataAcesso() {
-        return new Date();
-    }
-
-    getSaldo() {
-        return this.saldo;
+        Armazenador.salvar("saldo", this.saldo.toString());
     }
 }
+
+const conta = new Conta("Joana da Silva Olveira");
+console.log(conta.getTitular());
+
+// console.log(conta.nome);
+
+export default conta;
