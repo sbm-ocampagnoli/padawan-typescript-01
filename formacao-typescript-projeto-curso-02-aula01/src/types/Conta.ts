@@ -89,13 +89,13 @@ export class Conta {
     }
 }
 
-export class ContaPremium {
+export class ContaPremium extends Conta {
     registrarTransacao(transacao: Transacao) {
         if(transacao.tipoTransacao === TipoTransacao.DEPOSITO) {
             console.log("ganhou um bonûs de 50 centavos");
             transacao.valor += 0.50;
         }
-        this.registrarTransacao(transacao);
+        super.registrarTransacao(transacao);
     }
 }
 
