@@ -16,11 +16,11 @@ export class Conta {
         this.nome = nome;
     }
 
-    getTitular () {
+    public getTitular () {
         return this.nome;
     }
 
-    getGruposTransacoes(): GrupoTransacao[] {
+    public getGruposTransacoes(): GrupoTransacao[] {
         const gruposTransacoes: GrupoTransacao[] = [];
         const listaTransacoes: Transacao[] = structuredClone(this.transacoes);
         const transacoesOrdenadas: Transacao[] = listaTransacoes.sort((t1, t2) => t2.data.getTime() - t1.data.getTime());
@@ -41,13 +41,15 @@ export class Conta {
         return gruposTransacoes;
     }
 
-    getSaldo() {
+    public getSaldo() {
         return this.saldo;
     }
-    getDataAcesso(): Date {
+    
+    public getDataAcesso(): Date {
         return new Date();
     }
-    registrarTransacao(novaTransacao: Transacao): void {
+
+    public registrarTransacao(novaTransacao: Transacao): void {
         if (novaTransacao.tipoTransacao == TipoTransacao.DEPOSITO) {
             this.depositar(novaTransacao.valor);
         }
@@ -64,7 +66,7 @@ export class Conta {
         localStorage.setItem("transacoes", JSON.stringify(this.transacoes));
     }
 
-    debitar(valor: number): void {
+    private debitar(valor: number): void {
         if (valor <= 0) {
             throw new Error("O valor a ser debitado deve ser maior que zero!");
         }
@@ -76,7 +78,7 @@ export class Conta {
         localStorage.setItem("saldo", this.saldo.toString());
     }
 
-    depositar(valor: number): void {
+    private depositar(valor: number): void {
         if (valor <= 0) {
             throw new Error("O valor a ser depositado deve ser maior que zero!");
         }
