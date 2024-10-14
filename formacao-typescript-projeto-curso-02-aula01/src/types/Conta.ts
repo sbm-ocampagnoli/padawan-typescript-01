@@ -1,4 +1,5 @@
 import { Armazenador } from "./Armazenador";
+import { ValidaDebito, ValidaDeposito } from "./Decorators";
 import { GrupoTransacao } from "./GrupoTransacao";
 import { TipoTransacao } from "./TipoTransacao";
 import { Transacao } from "./Transacao";
@@ -67,26 +68,19 @@ export class Conta {
         Armazenador.salvar("transacoes", JSON.stringify(this.transacoes));
     }
 
+    @ValidaDebito
     private debitar(valor: number): void {
-        if (valor <= 0) {
-            throw new Error("O valor a ser debitado deve ser maior que zero!");
-        }
-        if (valor > this.saldo) {
-            throw new Error("Saldo insuficiente!");
-        }
-
         this.saldo -= valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
 
+    @ValidaDeposito
     private depositar(valor: number): void {
-        if (valor <= 0) {
-            throw new Error("O valor a ser depositado deve ser maior que zero!");
-        }
-
         this.saldo += valor;
         Armazenador.salvar("saldo", this.saldo.toString());
     }
+
+    
 }
 
 export class ContaPremium extends Conta {
